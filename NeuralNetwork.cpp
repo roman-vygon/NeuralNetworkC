@@ -16,44 +16,44 @@ class Neuron
 
 
 public:
-	void changeWeight(double x) //функция изменения веса нейрона
+	void changeWeight(double x) //change activation of a neuron
 	{
 		weight = x;
 	}
-	double getSin(int i) //функция получения значения  i-ого синапсиса нейрона
+	double getSin(int i) //get i-th weight
 	{
 		return sin[i];
 	}
-	double getGamma() //возвращает гамма значение нейрона (значение ошибки для перерасчета коэффициентов)
+	double getGamma() //get cached value for backprop
 	{
 		return gamma;
 	}
-	void changeGamma(double x) //изменяет гамма значение
+	void changeGamma(double x) //change cached value for backprop
 	{
 		gamma = x;
 	}
-	void changeSin(double x, int i) //изменяет значение i-ого синапсиса нейрона
+	void changeSin(double x, int i) //change weight
 	{
 		sin[i] = x;
 	}
-	void pushSin(double x) //добавляет синапсис нейрону
+	void pushSin(double x) //add weight variable
 	{
 		sin.push_back(x);
 	}
-	int getSinSize() //возвращает кол-во синапсисов нейрона
+	int getSinSize() //get layer size
 	{
 		return sin.size();
 	}
 
-	double getWeight() //возвращает вес нейрона
+	double getWeight() //return neuron activation
 	{
 		return weight;
 	}
-	double normalize(double x) //функция нормализации
+	double normalize(double x) //activation function
 	{		
 		return 1 / (1 + pow(M_E, -2*x));
 	}
-	void gatherWeight(vector <Neuron> lastLayer) //собирает все веса с предыдущего слоя нейронов
+	void gatherWeight(vector <Neuron> lastLayer) //forwardProp subfunction
 	{
 		changeWeight(0);
 		int xxx = 0;
@@ -75,13 +75,13 @@ class NeuronNet
 	vector <vector <Neuron>> Network;
 	double alpha;
 	double  beta = 1;
-	double normalize(double x) //функция нормализации
+	double normalize(double x) //activation function
 	{
 		if (x >= 1)
 			return 1;
 		return 1 / (1 + pow(M_E, -1 * x));
 	}
-	Neuron createNeuron(int x) //Создание случайного нейрона
+	Neuron createNeuron(int x) //initialize random neuron
 	{
 		Neuron a;
 
@@ -94,20 +94,20 @@ class NeuronNet
 
 		return a;
 	}
-	Neuron createNeuron(double x, bool j) //Создание определенного нейрона
+	Neuron createNeuron(double x, bool j) //initialize neuron with given activation
 	{
 
 		Neuron a;
 		a.changeWeight(x);
 		return a;
 	}
-	void updateNetwork() //изменение весов всей нейронной сети
+	void updateNetwork() //forwardProp
 	{
 		for (int i = 1; i < Network.size(); i++)
 			for (int j = 0; j < Network[i].size(); j++)
 				Network[i][j].gatherWeight(Network[i - 1]);
 	}
-	void ML(vector <double> answer) //обучение
+	void ML(vector <double> answer) //learning
 	{
 		for (int i = 0; i < Network[Network.size() - 1].size(); i++)
 		{
@@ -215,16 +215,16 @@ public:
 
 
 	}
-	int getAnswer(vector <bool> q) //почему бы и нет
+	int getAnswer(vector <bool> q) 
 	{
 		int answer;
 		return answer;
 	}
-	void createNetwork(int a, int b, int c, int d, double alph) //Создание сети, заполненной случайными нейронами
+	void createNetwork(int a, int b, int c, int d, double alph) //Initialize network with a neurons in the input layer, b hidden layers with c neurons each and d output neurons, Lr=alph
 	{
 		alpha = alph;
 		vector <Neuron> Layer;
-		for (int i = 0; i < c; i++)		//создание входного слоя
+		for (int i = 0; i < c; i++)		//generate input layer
 		{
 
 			
@@ -232,7 +232,7 @@ public:
 		}
 		Network.push_back(Layer);
 
-		for (int i = 0; i < a; i++) // создание промежуточных слоев
+		for (int i = 0; i < a; i++) //generate hidden layers
 		{
 
 			Layer.clear();
@@ -247,7 +247,7 @@ public:
 			Network.push_back(Layer);
 		}
 		Layer.clear();
-		for (int i = 0; i < d; i++) //создание выходного слоя
+		for (int i = 0; i < d; i++) //generate output layer
 		{
 			if (b == 0)
 				Layer.push_back(createNeuron(c));
